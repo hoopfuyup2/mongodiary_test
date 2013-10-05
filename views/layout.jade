@@ -1,0 +1,22 @@
+doctype 5
+html
+  head
+    title= ''
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='/stylesheets/normalize.css')
+    script(type='text/javascript', src='javascripts/zepto.min.js')
+  body
+    header#header
+      nav#nav
+        h1.title
+          a(href="/") jp.hoopfuyu.blog
+        p.subtitle 編集者はいません。参考文献なし。ごめんなさい
+          a(href="http://3hyte.com/wp", target="_blank") @hoopfuyu_
+    main#main
+      block content
+    footer#footer
+      ul
+        li
+           //ログイン画面ではなく管理画面のURLを指定
+           a(href="/admin/articles") 管理画面
+      p &copy; 2013 hoopfuyu TEST

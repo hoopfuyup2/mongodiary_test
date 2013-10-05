@@ -1,0 +1,31 @@
+extends layout
+
+block content
+  - if(article)
+    h1 編集記事
+  - else
+    h1 新規記事
+
+  p
+    form.editor(method="post", action=article ? ("/admin/article/" + article.id) : "/admin/article" )
+      p
+        label タイトル
+        p
+          input.title(type="text", name="title", value=(article && article.title) || '')
+      p
+        label 本文(Markdown)
+      p
+        textarea(name="body")= (article && article.body) || ''
+      p
+        input(type="submit")
+
+  - if(article)
+    p コメント管理
+    - each c in article.comments
+      p
+        .text = c.text
+        form(action="/admin/article/#{article.id}/comment/#{c.id}", method="post")
+         p
+           input(type="hidden", name="_method", value="delete")
+           input(type="submit", value="コメント削除")
+       hr

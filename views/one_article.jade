@@ -1,0 +1,71 @@
+extends layout
+
+mixin one-article(article)
+  .article-box
+    .date-likes
+      .create=article.dateString(article.createdAt)
+      .like
+         div
+            span.count= article.likeCount
+            span &nbsp;likes
+         a.like-button(href="javascript:void(0);", date-id=article.id) Like!
+     .article
+       h3.title
+         a(href="/article/#{article.id}")= article.title
+       .one-article!= article.bodyHtml()
+       .add-comment-button
+         a(href="javascript:void(0);")コメント (#{article.comments.length})
+       .comments(style="display:none;")
+         - each comment in article.comments
+           .comment
+             .text= comment.text
+             .date = article.dateString(comment.createdAt)
+         .add-comment
+           p
+             input.text(type="text", name="comment")
+           p.send-box
+             input.send(type="button", value="送信", date-id=article.id)
+       .meta
+         //.updated= article.dateString(article.updatedAt)
+         .author by #{article.author.email}
+  .clear
+
+mixin article-js()
+  script(type='text/javascript')
+    $function($) {
+
+      //コメント表示欄
+
+      $('.add-commnet-button a').one('click', function(e){
+        console.log($(this).parent().parent());
+        $(this).closest('.article').find('.comments').show();
+
+      //Like Button
+      $('.like-button').click(function() {
+        var self = this; //button
+        var $count = $(this).parent().find('.count');
+        $.post('/article/' + $(this).data('id') + '/like', {}, function(response){
+          console.log(response);
+          if(response){
+            var count = parseInt($count.text(), 10);
+            $count.text(count+1);
+            $(self).unbind('click');
+            $(self).addClass('disabled');
+          }
+        });
+      });
+
+      // Comment
+      $('.add-comment .send').click(function() {
+        var self = this; //button
+        var $text = $(this).closest('.article').find('.add-comment .text');
+        $.post('/article/' + $(this).data('id') + '/comment', {text:$text.val()}, function(response){
+          console.log(response)
+          location.href = location.href; //reload page
+        });
+      });
+    });
+
+block content
+  mixin article-js
+  mixin one-article(article)
